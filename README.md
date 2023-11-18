@@ -1,23 +1,20 @@
 # cat-deterrent
 ## Intro
-Cats are beloved by many, but even the the most en-
-dured cat enjoyer can have quandaries with their pet.
-They do whatever they want as Ernest Hemingway said
-in For Whom the Bell Tolls, “No animal has more liberty
-than the cat, but it buries the mess it makes. The cat
-is the best anarchist.” However, with some peoples’ pets,
-they do not bury their mess. In fact, they can create a lot
-of mess for there owners. Cats can cause issues for their
-owners in a multitude of ways. The cat catastrophes that
-will be focused on here are cats that jump to places they
-are not welcome such as counter tops , hot electric stoves,
-and harassing other tanked animals. Stopping cats be-
-ing in these undesirably places is the problem that this
-project aims to solve. The plan is to construct a mo-
-tion tracking water gun turret to deter them from their
-mischievous meandering.
-The system proposed in to accomplish our goals will be
-detecting motion, tracking it, and aiming a water gun to
-hit its target. The final system will be battery operated
-so that it is independent of a computer interface and
-bench power supply.
+This project is effectively a water gun turret. Ideally, we want to detect cats with the [OpenMv Camera]{https://openmv.io/}, and have a watergun servo system fire at the cat. For demostration, we are only detecting tennis balls for now. We are detecting the tennis ball with the OpenMv library were you can set a color threshold to 'find_blobs'. 
+
+## Physical System
+We have built a pan/tilt system out with the insides of a water gun attatched. 
+
+## Installation and Use
+You will need the [OpenMV IDE]{https://openmv.io/pages/download} to upload to the camera via USB connection.
+
+-'system_test.py' is a program to ensure all the functions of the physical system. 
+
+-'main.py' is the program that tracks an object and triggers the water gun
+
+-'ml_ball.py' uses a tennis ball Haarcascade to detect the ball, but is not very good
+
+
+
+
+
