@@ -28,8 +28,8 @@ sensor.set_pixformat(sensor.GRAYSCALE)
 
 # Load Haar Cascade
 # By default this will use all stages, lower satges is faster but less accurate.
-face_cascade = image.HaarCascade('/cascade_12stages_24dim_0_25far.cascade')
-print(face_cascade)
+cascade = image.HaarCascade('/tennisv0.cascade')
+print(cascade)
 
 # FPS clock
 clock = time.clock()
@@ -43,7 +43,7 @@ while (True):
     # Find objects.
     # Note: Lower scale factor scales-down the image more and detects smaller objects.
     # Higher threshold results in a higher detection rate, with more false positives.
-    objects = img.find_features(face_cascade, threshold=0.75, scale_factor=1.25)
+    objects = img.find_features(cascade, threshold=0.75, scale_factor=1.25)
 
 
     # Draw objects
