@@ -1,5 +1,5 @@
 # Tennis Ball Cascade with distance
-# ML example using a Haarcascade. The one loaded here was is for tennis balls taken from 
+# ML example using a Haarcascade. The one loaded here was is for tennis balls taken from
 # https://github.com/radosz99/tennis-ball-detector and convert using cascade_convert.py
 
 
@@ -28,7 +28,7 @@ sensor.set_pixformat(sensor.GRAYSCALE)
 
 # Load Haar Cascade
 # By default this will use all stages, lower satges is faster but less accurate.
-cascade = image.HaarCascade('/tennisv0.cascade')
+cascade = image.HaarCascade('/cascade_test2.cascade')
 print(cascade)
 
 # FPS clock

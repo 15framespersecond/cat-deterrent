@@ -7,6 +7,7 @@ import time
 import math
 import pyb
 import utime
+import os
 # Set up the camera
 sensor.reset()
 sensor.set_pixformat(sensor.RGB565)
@@ -14,15 +15,26 @@ sensor.set_framesize(sensor.QVGA)
 sensor.skip_frames(time=2000)
 sensor.set_auto_gain(False)  # Turn off auto gain control
 sensor.set_auto_whitebal(False)  # Turn off white balance control
+
+
 s2 = pyb.Servo(1)   # create a servo object on position P7
 s1 = pyb.Servo(2)   # create a servo object on position P8 PAN
 p = pyb.Pin("P0", pyb.Pin.OUT_PP) # select pin for triggering
 blue_led = pyb.LED(3) #select on-board LED
+#take a snapshot of the sill environment
+if not "tmp" in os.listdir(): os.mkdir("tmp")
+sensor.snapshot().save("tmp/bg.bmp")
 
 # Tennis ball color range (adjust these values for your specific environment)
-threshold = (60, 110, -30, -10, -7, 40) # HUE_MIN, HUE_MAX, SAT_MIN, SAT_MAX, VAL_MIN, VAL_MAX
-threshold = (30, 60, 25, 65, 10, 70) # threshold for red
+#threshold = (60, 110, -30, -10, -7, 40)
+#threshold = (60, 110, -40, 15, 0, 50)
+#threshold = (30, 60, 25, 65, 10, 70) # threshold for red
+
+threshold_rgb = (50, 100, 75, 150, 75, 255)  # HUE_MIN, HUE_MAX, SAT_MIN, SAT_MAX, VAL_MIN, VAL_MAX
+threshold_lab = (30, 110, -60, 50, -60, 50)  # HUE_MIN, HUE_MAX, SAT_MIN, SAT_MAX, VAL_MIN, VAL_MAX
 # Variables for tracking
+threshold_rgb = (50, 100, 50, 150, 50, 255)  # HUE_MIN, HUE_MAX, SAT_MIN, SAT_MAX, VAL_MIN, VAL_MAX
+threshold_lab = (40, 110, -60, 50, -60, 50)
 prev_center = (0, 0)
 prev_time = 0
 
@@ -82,35 +94,43 @@ def blink_led():
 while True:
     img = sensor.snapshot()
 
-    # Color detection
-    blobs = img.find_blobs([threshold], pixels_threshold=200, area_threshold=200)
+
+    # Motion detection
+    img.difference("tmp/bg.bmp")
+    hist = img.get_histogram()
+    diff = hist.get_percentile(0.99).l_value() - hist.get_percentile(0.90).l_value()
+    if diff > 5:
+        blobs = img.find_blobs([threshold_rgb, threshold_lab], pixels_threshold=40, area_threshold=40)
+        if blobs:
+            # Find the largest detected blob (the tennis ball)
+            max_blob = max(blobs, key=lambda b: b.pixels())
+            img.draw_rectangle(max_blob.rect(), color=(0, 255, 0))  # Draw a green rectangle around the ball
+            img.draw_cross(max_blob.cx(), max_blob.cy(), color=(0, 255, 0))  # Draw a green cross at the ball's center
+            # Draw cross in center of screen
+            img.draw_cross(img.width()//2, img.height()//2, size = min(img.width()//5, img.height()//5))
+            # Draw distance
+            for i in range(len(blobs)):
+                img.draw_string(blobs[i][0] - 16, blobs[i][1] - 16, "Distance %d mm" % rect_size_to_distance(blobs[i]))
+                #print(rect_size_to_distance(blobs[i])) #debug
+                s1.angle(-calculate_pan_angle(max_blob.cx(), image_width_pixels, rect_size_to_distance(blobs[i])))
+                s2.angle(-calculate_tilt_angle(max_blob.cy(), image_height_pixels, rect_size_to_distance(blobs[i]))) #magic numbers to calibrate tilt angle
+                #p.high() # or p.value(1) to make the pin high (3.3V)
+                #utime.sleep_ms(100)
+                p.low()
+                print(-2*calculate_tilt_angle(max_blob.cy(), image_height_pixels, rect_size_to_distance(blobs[i]))) #debug
+            # Calculate motion tracking(not used yet but should predict speed of object moving)
+            current_time = time.ticks_ms()
+            if prev_center != (0, 0):
+                delta_time = time.ticks_diff(current_time, prev_time)
+                delta_x = max_blob.cx() - prev_center[0]
+                delta_y = max_blob.cy() - prev_center[1]
+                speed = math.sqrt(delta_x ** 2 + delta_y ** 2) / delta_time
+                #print("Speed:", speed, "pixels/ms")
+
+            prev_center = (max_blob.cx(), max_blob.cy())
+            prev_time = current_time
 
 
-    if blobs:
-        # Find the largest detected blob (the tennis ball)
-        max_blob = max(blobs, key=lambda b: b.pixels())
-        img.draw_rectangle(max_blob.rect(), color=(0, 255, 0))  # Draw a green rectangle around the ball
-        img.draw_cross(max_blob.cx(), max_blob.cy(), color=(0, 255, 0))  # Draw a green cross at the ball's center
-        # Draw cross in center of screen
-        img.draw_cross(img.width()//2, img.height()//2, size = min(img.width()//5, img.height()//5))
-        # Draw distance
-        for i in range(len(blobs)):
-            img.draw_string(blobs[i][0] - 16, blobs[i][1] - 16, "Distance %d mm" % rect_size_to_distance(blobs[i]))
-            #print(rect_size_to_distance(blobs[i])) #debug
-            s1.angle(-calculate_pan_angle(max_blob.cx(), image_width_pixels, rect_size_to_distance(blobs[i])))
-            s2.angle(-calculate_tilt_angle(max_blob.cy(), image_height_pixels, rect_size_to_distance(blobs[i]))) #magic numbers to calibrate tilt angle
-            p.high() # or p.value(1) to make the pin high (3.3V)
-            utime.sleep_ms(100)
-            p.low()
-            print(-2*calculate_tilt_angle(max_blob.cy(), image_height_pixels, rect_size_to_distance(blobs[i]))) #debug
-        # Calculate motion tracking(not used yet but should predict speed of object moving)
-        current_time = time.ticks_ms()
-        if prev_center != (0, 0):
-            delta_time = time.ticks_diff(current_time, prev_time)
-            delta_x = max_blob.cx() - prev_center[0]
-            delta_y = max_blob.cy() - prev_center[1]
-            speed = math.sqrt(delta_x ** 2 + delta_y ** 2) / delta_time
-            #print("Speed:", speed, "pixels/ms")
 
-        prev_center = (max_blob.cx(), max_blob.cy())
-        prev_time = current_time
+
+

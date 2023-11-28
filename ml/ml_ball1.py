@@ -30,7 +30,7 @@ sensor.set_gainceiling(16)
 sensor.set_framesize(sensor.QVGA)
 sensor.set_pixformat(sensor.GRAYSCALE)
 # Cascade import
-cascade = image.HaarCascade('/cascade_12stages_24dim_0_25far.cascade')
+cascade = image.HaarCascade('/cascade_test4.cascade')
 # Variables for tracking
 prev_center = (0, 0)
 prev_time = 0
@@ -95,22 +95,23 @@ while (True):
     # Find objects.
     # Note: Lower scale factor scales-down the image more and detects smaller objects.
     # Higher threshold results in a higher detection rate, with more false positives.
-    objects = img.find_features(ball_cascade, threshold=0.75, scale_factor=1.25)
+    objects = img.find_features(cascade, threshold=.75, scale_factor=1.25)
 
     if objects:
         # Find the largest detected object (the tennis ball)
-        max_object = max(objects, key=lambda b: b.pixels())
-        img.draw_rectangle(max_object.rect(), color=(0, 255, 0))  # Draw a green rectangle around the ball
-        img.draw_cross(max_object.cx(), max_object.cy(), color=(0, 255, 0))  # Draw a green cross at the ball's center
+        #max_object = objects
+        #img.draw_cross(objects.cx(), objects.cy(), color=(0, 255, 0))  # Draw a green cross at the ball's center
         # Draw cross in center of screen
         img.draw_cross(img.width()//2, img.height()//2, size = min(img.width()//5, img.height()//5))
         # Draw distance
         for i in range(len(objects)):
-            img.draw_string(objects[i][0] - 16, objects[i][1] - 16, "Distance %d mm" % rect_size_to_distance(objects[i]))
+            img.draw_rectangle(objects[i], color=(0, 255, 0))  # Draw a green rectangle around the ball
+            #img.draw_cross(objects[i].cx(), objects[i].cy(), color=(0, 255, 0))  # Draw a green cross at the ball's center
+            #img.draw_string(objects[i][0] - 16, objects[i][1] - 16, "Distance %d mm" % rect_size_to_distance(objects[i]))
             #print(rect_size_to_distance(objects[i])) #debug
-            s1.angle(-calculate_pan_angle(max_object.cx(), image_width_pixels, rect_size_to_distance(objects[i])))
-            s2.angle(-calculate_tilt_angle(max_object.cy(), image_height_pixels, rect_size_to_distance(objects[i]))) #magic numbers to calibrate tilt angle
-            p.high() # or p.value(1) to make the pin high (3.3V)
-            utime.sleep_ms(100)
-            p.low()
-            print(-2*calculate_tilt_angle(max_object.cy(), image_height_pixels, rect_size_to_distance(objects[i]))) #debug
+            #s1.angle(-calculate_pan_angle(max_object.cx(), image_width_pixels, rect_size_to_distance(objects[i])))
+            #s2.angle(-calculate_tilt_angle(max_object.cy(), image_height_pixels, rect_size_to_distance(objects[i]))) #magic numbers to calibrate tilt angle
+            #p.high() # or p.value(1) to make the pin high (3.3V)
+            #utime.sleep_ms(100)
+            #p.low()
+            #print(-2*calculate_tilt_angle(max_object.cy(), image_height_pixels, rect_size_to_distance(objects[i]))) #debug
