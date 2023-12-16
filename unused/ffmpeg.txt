@@ -1,0 +1,9 @@
+## Call file info
+ffmpeg -i filename
+
+## Convert .mov to .jpg
+ffmpeg -i input.MOV -vf fps=24 out%d.jpg
+
+## Crop .mov
+ffmpeg -i in.mp4 -filter:v "crop=out_w:out_h:x:y" out.mp4
+    where out_w is width of crop, out_h is height, x and y are (0,0) from top left

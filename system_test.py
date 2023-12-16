@@ -32,29 +32,32 @@ def blink_led():
 
 while(True):
     img = sensor.snapshot()
+    blink_led()
+    blink_led()
     # trigger test
     p.high() # or p.value(1) to make the pin high (3.3V)
     utime.sleep_ms(300)
     p.low()
     blink_led()
+
     # tilt test
-    s2.angle(0) #tilt to 0
-    utime.sleep_ms(500)
-    s2.angle(45) #tilt to 45
-    utime.sleep_ms(500)
-    s2.angle(0) # reset to 0
+    #s2.angle(0) #tilt to 0
+    #utime.sleep_ms(500)
+    #s2.angle(45) #tilt to 45
+    #utime.sleep_ms(500)
+    #s2.angle(0) # reset to 0
 
     blink_led()
     # pan test
-    s1.angle(0) # pan to 45
-    utime.sleep_ms(300)
-    s1.angle(45)
-    utime.sleep_ms(300)
-    s1.angle(0)
-    utime.sleep_ms(300)
-    s1.angle(-45)
-    utime.sleep_ms(300)
-    s1.angle(0)
-    blink_led()
-    blink_led()
+    #s1.angle(0) # pan to 45
+    #utime.sleep_ms(300)
+    #s1.angle(35)
+    #utime.sleep_ms(300)
+    #s1.angle(0)
+    #utime.sleep_ms(300)
+    #s1.angle(-35)
+    #utime.sleep_ms(300)
+    #s1.angle(0)
+    #blink_led()
+    #blink_led()
 
