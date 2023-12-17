@@ -7,11 +7,11 @@ The system built for this project is composed a pan/tilt platform with a 3d prin
 
 ## Use
 You will need the [OpenMV IDE](https://openmv.io/pages/download) to upload to the camera via USB connection.
-
-- '''system_test.py''' is a program to ensure all the functions of the physical system. 
+'''
+- 'system_test.py' is a program to ensure all the functions of the physical system. 
 
 - 'final_demo.py' is the program that tracks the object and triggers the water gun
-
+'''
 Adjust parameters such as threshold_lab, intial water velocity, and any nessesary offsets in distance,pan, or tilt for the desired object in your desired enviroment.
 
 ## Slightly more in depth overview and operation 
