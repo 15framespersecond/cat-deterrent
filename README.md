@@ -8,7 +8,7 @@ The system built for this project is composed a pan/tilt platform with a 3d prin
 ## Use
 You will need the [OpenMV IDE](https://openmv.io/pages/download) to upload to the camera via USB connection.
 
-- 'system_test.py' is a program to ensure all the functions of the physical system. 
+- '''system_test.py''' is a program to ensure all the functions of the physical system. 
 
 - 'final_demo.py' is the program that tracks the object and triggers the water gun
 
@@ -19,4 +19,9 @@ While intializing, a green LED will be on. During this intialzation, the OpenMV 
 
 The 3-D printed parts used are found in hte stl_parts folder.
 
-![](project_photos/actual_plate.jpg)
+A detailed report is found in the report.pdf
+
+The following are some photos of the system
+![side view](project_photos/actual_plate.jpg)
+![top view](project_photos/top_view.jpg)
+![front view](project_photos/front_view.jpg)
